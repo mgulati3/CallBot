@@ -1,260 +1,3 @@
-// import express from 'express';
-// import https from 'https';
-// import twilio from 'twilio';
-// import 'dotenv/config';
-
-// const app = express();
-// const port = 3000;
-
-// // Add middleware to parse incoming POST data
-// app.use(express.urlencoded({ extended: true }));
-
-// // Configuration
-// const ULTRAVOX_API_KEY = process.env.ULTRAVOX_API_KEY;
-// const ULTRAVOX_API_URL = 'https://api.ultravox.ai/api/calls';
-
-// // Static Dan.ai system prompt
-// const SYSTEM_PROMPT = `
-// Your name is Steve and you’re answering calls on behalf of Dan.ai, a company that helps trucking clients:
-// 1) Look up any appointments related to trucks (dates, times, locations).
-// 2) Check whether a customer’s cargo has been loaded or unloaded.
-
-// Capabilities & features:
-// - Book new trucking appointments on the spot.
-// - Answer calls in an energetic, sales-style voice.
-// - Handle short Q&A flows (FAQs) about Dan.ai’s services.
-// - Collect all necessary details (truck ID, date, customer info) to follow up.
-
-// When a call comes in:
-// 1. Greet the caller warmly and introduce yourself as “Steve from Dan.ai.”
-// 2. Ask how you can help (e.g. “Are you calling to book a truck appointment or check a load status?”).
-// 3. If they want to book, collect: date, time, pickup/dropoff locations, and confirm.
-// 4. If they want load status, ask for their load or truck ID and reply with “Your shipment is currently [loaded / unloaded].”
-// 5. For any other questions, give concise, helpful answers and offer to connect them with a human if needed.
-// Remember to confirm all key details before ending the call.
-// `.trim();
-
-// const ULTRAVOX_CALL_CONFIG = {
-//   systemPrompt: SYSTEM_PROMPT,
-//   model: 'fixie-ai/ultravox',
-//   voice: 'Mark',
-//   temperature: 0.3,
-//   firstSpeaker: 'FIRST_SPEAKER_AGENT',
-//   medium: { twilio: {} }
-// };
-
-// // Create Ultravox call and get join URL
-// async function createUltravoxCall(config = ULTRAVOX_CALL_CONFIG) {
-//   const request = https.request(ULTRAVOX_API_URL, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       'X-API-Key': ULTRAVOX_API_KEY
-//     }
-//   });
-
-//   return new Promise((resolve, reject) => {
-//     let data = '';
-//     request.on('response', (response) => {
-//       response.on('data', chunk => data += chunk);
-//       response.on('end', () => resolve(JSON.parse(data)));
-//     });
-//     request.on('error', reject);
-//     request.write(JSON.stringify(config));
-//     request.end();
-//   });
-// }
-
-// // Handle incoming calls
-// app.post('/incoming', async (req, res) => {
-//   try {
-//     const callerNumber = req.body.From;
-//     console.log(`Incoming call from: ${callerNumber}`);
-
-//     // Inject caller context into Dan.ai prompt
-//     const dynamicSystemPrompt = `
-// Your name is Steve and you’re answering calls on behalf of Dan.ai, a company that helps trucking clients:
-// 1) Look up any appointments related to trucks (dates, times, locations).
-// 2) Check whether a customer’s cargo has been loaded or unloaded.
-
-// IMPORTANT CONTEXT:
-// - The caller’s phone number is: ${callerNumber}
-
-// Capabilities & features:
-// - Book new trucking appointments on the spot.
-// - Answer calls in an energetic, sales-style voice.
-// - Handle short Q&A flows (FAQs) about Dan.ai’s services.
-// - Collect all necessary details (truck ID, date, customer info) to follow up.
-
-// When a call comes in:
-// 1. Greet the caller warmly and introduce yourself as “Steve from Dan.ai.”
-// 2. Ask how you can help (e.g. “Are you calling to book a truck appointment or check a load status?”).
-// 3. If they want to book, collect: date, time, pickup/dropoff locations, and confirm.
-// 4. If they want load status, ask for their load or truck ID and reply with “Your shipment is currently [loaded / unloaded].”
-// 5. For any other questions, give concise, helpful answers and offer to connect them with a human if needed.
-// Remember to confirm all key details before ending the call.
-// `.trim();
-
-//     const callConfig = {
-//       ...ULTRAVOX_CALL_CONFIG,
-//       systemPrompt: dynamicSystemPrompt
-//     };
-
-//     const { joinUrl } = await createUltravoxCall(callConfig);
-
-//     const twiml = new twilio.twiml.VoiceResponse();
-//     const connect = twiml.connect();
-//     connect.stream({ url: joinUrl, name: 'ultravox' });
-
-//     res.type('text/xml').send(twiml.toString());
-//   } catch (error) {
-//     console.error('Error handling incoming call:', error);
-//     const twiml = new twilio.twiml.VoiceResponse();
-//     twiml.say('Sorry, there was an error connecting your call.');
-//     res.type('text/xml').send(twiml.toString());
-//   }
-// });
-
-// // Start server
-// app.listen(port, () => {
-//   console.log(`Server running on port ${port}`);
-// });
-
-// import express from 'express';
-// import https from 'https';
-// import twilio from 'twilio';
-// import fs from 'fs';
-// import path from 'path';
-// import 'dotenv/config';
-
-// const app = express();
-// const port = 3000;
-
-// // Parse incoming POST data
-// app.use(express.urlencoded({ extended: true }));
-
-// // Configuration
-// const ULTRAVOX_API_KEY = process.env.ULTRAVOX_API_KEY;
-// const ULTRAVOX_API_URL = 'https://api.ultravox.ai/api/calls';
-
-// // Static Dan.ai system prompt
-// const SYSTEM_PROMPT = `
-// Your name is Steve and you’re answering calls on behalf of Dan.ai, a company that helps trucking clients:
-// 1) Look up any appointments related to trucks (dates, times, locations).
-// 2) Check whether a customer’s cargo has been loaded or unloaded.
-
-// Capabilities & features:
-// - Book new trucking appointments on the spot.
-// - Answer calls in an energetic, sales-style voice.
-// - Handle short Q&A flows (FAQs) about Dan.ai’s services.
-// - Collect all necessary details (truck ID, date, customer info) to follow up.
-
-// When a call comes in:
-// 1. Greet the caller warmly and introduce yourself as “Steve from Dan.ai.”
-// 2. Ask how you can help (e.g. “Are you calling to book a truck appointment or check a load status?”).
-// 3. If they want to book, collect: date, time, pickup/dropoff locations, and confirm.
-// 4. If they want load status, ask for their load or truck ID and reply with “Your shipment is currently [loaded / unloaded].”
-// 5. For any other questions, give concise, helpful answers and offer to connect them with a human if needed.
-// Remember to confirm all key details before ending the call.
-// `.trim();
-
-// const ULTRAVOX_CALL_CONFIG = {
-//   systemPrompt: SYSTEM_PROMPT,
-//   model: 'fixie-ai/ultravox',
-//   voice: 'Mark',
-//   temperature: 0.3,
-//   firstSpeaker: 'FIRST_SPEAKER_AGENT',
-//   medium: { twilio: {} }
-// };
-
-// // Utility to append a record to calls.json
-// function logCall(record) {
-//   const file = path.resolve('./calls.json');
-//   fs.readFile(file, 'utf8', (err, data) => {
-//     let arr = [];
-//     if (!err) {
-//       try {
-//         arr = JSON.parse(data);
-//       } catch {}
-//     }
-//     arr.push(record);
-//     fs.writeFile(file, JSON.stringify(arr, null, 2), err => {
-//       if (err) console.error('Failed to write calls.json:', err);
-//     });
-//   });
-// }
-
-// // Create Ultravox call and get join URL
-// async function createUltravoxCall(config = ULTRAVOX_CALL_CONFIG) {
-//   const request = https.request(ULTRAVOX_API_URL, {
-//     method: 'POST',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       'X-API-Key': ULTRAVOX_API_KEY
-//     }
-//   });
-
-//   return new Promise((resolve, reject) => {
-//     let data = '';
-//     request.on('response', response => {
-//       response.on('data', chunk => (data += chunk));
-//       response.on('end', () => resolve(JSON.parse(data)));
-//     });
-//     request.on('error', reject);
-//     request.write(JSON.stringify(config));
-//     request.end();
-//   });
-// }
-
-// // Handle incoming calls
-// app.post('/incoming', async (req, res) => {
-//   try {
-//     const callerNumber = req.body.From;
-//     console.log(`Incoming call from: ${callerNumber}`);
-
-//     // Build dynamic prompt with caller context
-//     const dynamicSystemPrompt = `
-// ${SYSTEM_PROMPT}
-
-// IMPORTANT CONTEXT:
-// - The caller’s phone number is: ${callerNumber}
-// `.trim();
-
-//     const callConfig = {
-//       ...ULTRAVOX_CALL_CONFIG,
-//       systemPrompt: dynamicSystemPrompt
-//     };
-
-//     // Get the stream URL
-//     const { joinUrl } = await createUltravoxCall(callConfig);
-
-//     // Log into calls.json
-//     logCall({
-//       callerNumber,
-//       timestamp: new Date().toISOString(),
-//       joinUrl
-//     });
-
-//     // Respond with TwiML to connect the stream
-//     const twiml = new twilio.twiml.VoiceResponse();
-//     const connect = twiml.connect();
-//     connect.stream({ url: joinUrl, name: 'ultravox' });
-
-//     res.type('text/xml').send(twiml.toString());
-//   } catch (error) {
-//     console.error('Error handling incoming call:', error);
-//     const twiml = new twilio.twiml.VoiceResponse();
-//     twiml.say('Sorry, there was an error connecting your call.');
-//     res.type('text/xml').send(twiml.toString());
-//   }
-// });
-
-// // Start server
-// app.listen(port, () => {
-//   console.log(`Server running on port ${port}`);
-// });
-
-
 import express from 'express';
 import https from 'https';
 import twilio from 'twilio';
@@ -262,46 +5,51 @@ import 'dotenv/config';
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// parse form-encoded POST bodies (Twilio will still populate req.body)
 app.use(express.urlencoded({ extended: true }));
 
-// Your Ultravox credentials
+// Your Ultravox config
 const ULTRAVOX_API_KEY = process.env.ULTRAVOX_API_KEY;
 const ULTRAVOX_API_URL = 'https://api.ultravox.ai/api/calls';
 
-// Base Dan.ai system prompt
 const SYSTEM_PROMPT = `
-You are Steve, speaking in the “Mark” voice, handling Dan.ai calls *one question at a time*.  
-Follow this protocol exactly:
+You are Steve, speaking in the calm “Mark” voice for Dan.ai.
+Sound friendly and human.  Use natural pauses created by commas,
+periods, or ellipses ( … ).  Do NOT say the word “pause” or describe
+your pauses—just insert short silences in your delivery.
 
-1. Greet:
-   • Say: “Hello, this is Steve from Dan.ai. How can I help you today?”  
-   • Then *pause* for the caller’s response.
+Greeting  
+• Say: “Hi there … this is Steve from Dan.ai.  How can I help you today?”  
+• Then stop and listen.
 
-2. If caller says “book appointment” (or similar):
-   a) Ask: “Sure—what date would you like?”  
-   b) Pause for response.  
-   c) Ask: “Great. And what time?”  
-   d) Pause.  
-   e) Ask: “Lastly, what pickup and drop-off locations?”  
-   f) Pause.  
-   g) Confirm: “Okay—I have you down for [DATE] at [TIME] from [LOCATIONS]. Is that correct?”  
-   h) Pause, then say “Thank you. Our team will follow up shortly. Goodbye!” and hang up.
+Booking flow  
+1. “Sure, uh … what date works for you?” — wait.  
+2. “Great.  And what time would you like?” — wait.  
+3. “Lastly, where should we pick up and drop off?” — wait.  
+4. “Perfect.  I have you for [DATE] at [TIME], from [PICKUP] to [DROPOFF].”  
+5. “Is there anything else I can help you with today?” — wait.  
+6. If “no”: “Thanks for calling Dan.ai.  Have a wonderful day!” — hang up.
 
-3. If caller says “check status” (or similar):
-   a) Ask: “Please tell me your truck or load ID.”  
-   b) Pause.  
-   c) Reply: “Your shipment [ID] is currently [loaded/unloaded]. Goodbye!” and hang up.
+Status flow  
+1. “Sure, may I have your truck or load I‑D?” — wait.  
+2. “Let me check … okay, your shipment [ID] is currently [loaded / unloaded].”  
+3. “Can I help you with anything else?” — wait.  
+4. If “no”: “Alright, thanks for checking in with Dan.ai.  Take care!” — hang up.
 
-4. For any *other* question:
-   a) Say: “Let me check on that for you.”  
-   b) Pause while you think.  
-   c) Give a concise answer or say: “I’m not sure—let me connect you to a human.”  
-   d) If handing off, bridge to your support number.
+Other questions  
+1. “Let me just see …” — brief silence while you think.  
+2. Give a concise answer or say:  
+   “Hmm, I’m not certain—let me connect you with our support team.”  
+3. “Anything else I can do for you?” — wait.  
+4. If “no”: “Thank you for choosing Dan.ai.  Have a great day!” — hang up.
 
-**Do not** list all options at once. Always ask one thing and wait.
+Rules  
+• Ask only one question, then wait for the caller’s answer.  
+• Sprinkle in light fillers (“uh”, “sure thing”) to stay informal, but not overdone.  
+• Always finish a task by asking if the caller needs anything else before ending the call.
 `.trim();
 
-// Default Ultravox call config with Mark’s voice
 const ULTRAVOX_CALL_CONFIG = {
   systemPrompt: SYSTEM_PROMPT,
   model: 'fixie-ai/ultravox',
@@ -311,7 +59,6 @@ const ULTRAVOX_CALL_CONFIG = {
   medium: { twilio: {} }
 };
 
-// Helper to create an Ultravox call and return its join URL
 async function createUltravoxCall(config = ULTRAVOX_CALL_CONFIG) {
   const req = https.request(ULTRAVOX_API_URL, {
     method: 'POST',
@@ -324,7 +71,7 @@ async function createUltravoxCall(config = ULTRAVOX_CALL_CONFIG) {
   return new Promise((resolve, reject) => {
     let data = '';
     req.on('response', res => {
-      res.on('data', chunk => data += chunk);
+      res.on('data', c => data += c);
       res.on('end', () => resolve(JSON.parse(data)));
     });
     req.on('error', reject);
@@ -333,43 +80,40 @@ async function createUltravoxCall(config = ULTRAVOX_CALL_CONFIG) {
   });
 }
 
-// Webhook for incoming calls
+// ————————————————————————————————————————————————————————————
+// Webhook for incoming calls (no signature validation for now)
+// ————————————————————————————————————————————————————————————
 app.post('/incoming', async (req, res) => {
   try {
     const callerNumber = req.body.From;
     console.log(`Incoming call from: ${callerNumber}`);
 
-    // Inject the caller's number into the prompt context
     const dynamicPrompt = `
 ${SYSTEM_PROMPT}
 
 IMPORTANT CONTEXT:
-- The caller’s phone number is: ${callerNumber}
+- Caller’s number: ${callerNumber}
 
-Handle the conversation end-to-end in this same “Mark” voice via Ultravox.
-    `.trim();
+Handle the entire conversation via Ultravox in the “Mark” voice.
+`.trim();
 
-    // Create the Ultravox call
     const { joinUrl } = await createUltravoxCall({
       ...ULTRAVOX_CALL_CONFIG,
       systemPrompt: dynamicPrompt
     });
 
-    // Respond with TwiML that streams to Ultravox
     const twiml = new twilio.twiml.VoiceResponse();
-    const connect = twiml.connect();
-    connect.stream({ url: joinUrl, name: 'ultravox' });
+    twiml.connect().stream({ url: joinUrl, name: 'ultravox' });
 
     res.type('text/xml').send(twiml.toString());
-  } catch (error) {
-    console.error('Error connecting to Ultravox:', error);
+  } catch (err) {
+    console.error('Ultravox error:', err);
     const twiml = new twilio.twiml.VoiceResponse();
     twiml.say('Sorry, we’re having trouble right now.');
     res.type('text/xml').send(twiml.toString());
   }
 });
 
-// Start listening
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server listening on port ${port}`);
 });
