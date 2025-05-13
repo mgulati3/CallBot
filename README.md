@@ -120,8 +120,4 @@ callbot/
 
 ---
 
-### License
-
-MIT — free to use, modify, and distribute.
-
 *Happy trucking! 🚚*
